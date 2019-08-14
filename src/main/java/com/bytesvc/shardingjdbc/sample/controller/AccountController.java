@@ -76,14 +76,15 @@ public class AccountController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@Transactional(propagation = Propagation.NEVER) // don't participant in a transaction
 	public void createAccount() {
-		// AccountServiceImpl -> AccountServiceTemp(REQUIRES_NEW)
-		// 1. AccountServiceImpl insert 0
-		// 2. AccountServiceTemp insert 2 & 3 (REQUIRES_NEW)
-		// 3. AccountServiceImpl insert 0
+		// AccountServiceOne -> AccountServiceTwo(REQUIRES_NEW)
+		// 1. AccountServiceOne insert 0
+		// 2. AccountServiceTwo insert 2 & 3 (REQUIRES_NEW)
+		// 3. AccountServiceOne insert 1
 		// 4. throw new IllegalStateException
 		this.accountService.createAccount(0, 1, 2, 3, "INIT");
 
-		// expect: 2 & 3 created; actual: 2, 1, 3 created
+		// expect: AccountServiceOne failed; AccountServiceTwo succeed, 2 & 3 created; 
+		// actual: 2, 1, 3 created
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
