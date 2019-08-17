@@ -12,7 +12,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bytesvc.shardingjdbc.sample.service.IAccountService;
 
 @RestController
-public class AccountController {
+public class AccountController implements InitializingBean {
 	static String TAB_ORDER_0 = "t_order_0";
 	static String TAB_ORDER_1 = "t_order_1";
 
@@ -81,9 +83,9 @@ public class AccountController {
 		// 2. AccountServiceTwo insert 2 & 3 (REQUIRES_NEW)
 		// 3. AccountServiceOne insert 1
 		// 4. throw new IllegalStateException
-		this.accountService.createAccount(0, 1, 2, 3, "INIT");
+		this.accountService.createAccount(0, "INIT");
 
-		// expect: AccountServiceOne failed; AccountServiceTwo succeed, 2 & 3 created; 
+		// expect: AccountServiceOne failed; AccountServiceTwo succeed, 2 & 3 created;
 		// actual: 2, 1, 3 created
 	}
 
@@ -134,6 +136,13 @@ public class AccountController {
 				// ignore
 			}
 		}
+	}
+
+	// @Autowired
+	private PlatformTransactionManager transactionManager;
+
+	public void afterPropertiesSet() throws Exception {
+		System.out.printf("tm: %s%n", this.transactionManager);
 	}
 
 }

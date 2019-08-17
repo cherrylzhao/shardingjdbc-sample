@@ -16,9 +16,8 @@ public class AccountServiceTwo implements IAccountService {
 	private AccountMapper accountDao;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void createAccount(long userId1, long userId2, long userId3, long userId4, String status) {
-		this.accountDao.createAccount(userId3, "TEMP");
-		this.accountDao.createAccount(userId4, "TEMP");
+	public void createAccount(long userId, String status) {
+		this.accountDao.createAccount(userId, "TEMP");
 	}
 
 	public List<Object> findAllAcount() {
