@@ -11,6 +11,7 @@ import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,15 @@ public class OrderServiceOne implements IOrderService {
 		this.doCreateOrder(1, status);
 
 		// 期望事务回滚, 但事务实际被提交
-		throw new IllegalStateException("rollback");
+		// throw new IllegalStateException("rollback");
 	}
 
 	private void doCreateOrder(long userId, String status) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
-			conn = this.shardingDataSource.getConnection();
+			conn = DataSourceUtils.getConnection(this.shardingDataSource);
+			// conn = this.shardingDataSource.getConnection();
 			stmt = conn.prepareStatement("INSERT INTO t_order (user_id, status) VALUES (?, ?)");
 			stmt.setLong(1, userId);
 			stmt.setString(2, status);
