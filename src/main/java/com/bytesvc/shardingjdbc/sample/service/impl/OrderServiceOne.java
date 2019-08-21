@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
+import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +23,7 @@ public class OrderServiceOne implements IOrderService {
 	@Autowired(required = false)
 	private DataSource shardingDataSource;
 
+	@ShardingTransactionType(TransactionType.XA)
 	@Transactional
 	public void createOrder(String status) {
 		this.doCreateOrder(0, status);

@@ -1,7 +1,6 @@
 package com.bytesvc.shardingjdbc.sample.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,9 +11,6 @@ import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 public class OrderController {
 	@Autowired
 	private IOrderService orderServiceOne;
-	@Qualifier("orderServiceTwo")
-	@Autowired
-	private IOrderService orderServiceTwo;
 
 	@RequestMapping(value = "/order/createOne", method = RequestMethod.POST)
 	public void createAccountOne() {
@@ -25,7 +21,7 @@ public class OrderController {
 	@RequestMapping(value = "/order/createTwo", method = RequestMethod.POST)
 	public void createAccountTwo() {
 		// OrderServiceOne使用GenericConfiguration, 直接写t_order_0, t_order_1表
-		this.orderServiceTwo.createOrder("INIT");
+		// this.orderServiceTwo.createOrder("INIT");
 	}
 
 }
