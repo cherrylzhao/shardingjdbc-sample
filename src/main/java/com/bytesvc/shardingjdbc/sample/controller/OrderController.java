@@ -20,7 +20,7 @@ public class OrderController {
 
 	@RequestMapping(value = "/order/createTwo", method = RequestMethod.POST)
 	public void createAccountTwo() {
-		// OrderServiceOne使用GenericConfiguration, 直接写t_order_0, t_order_1表
+		// OrderServiceTwo使用GenericConfiguration, 直接写t_order_0, t_order_1表
 		// this.orderServiceTwo.createOrder("INIT");
 	}
 

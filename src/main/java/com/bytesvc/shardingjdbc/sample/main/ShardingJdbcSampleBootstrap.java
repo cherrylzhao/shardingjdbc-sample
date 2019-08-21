@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.bytesvc.shardingjdbc.sample.config.ShardingConfiguration;
 
-@SpringBootApplication(scanBasePackages = "com.bytesvc.shardingjdbc.sample")
+@SpringBootApplication(scanBasePackages = { "com.bytesvc.shardingjdbc.sample", "io.shardingsphere.transaction.aspect" })
 @EnableAutoConfiguration(exclude = { SpringBootConfiguration.class, DataSourceAutoConfiguration.class })
 @EnableTransactionManagement
 @Import(ShardingConfiguration.class)

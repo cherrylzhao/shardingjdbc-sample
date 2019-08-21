@@ -10,32 +10,24 @@ import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 
-@Primary
-@Service
-public class OrderServiceOne implements IOrderService {
+@Service("orderServiceTwo")
+public class OrderServiceTwo implements IOrderService {
 	@Qualifier("shardingDataSource")
 	@Autowired(required = false)
 	private DataSource shardingDataSource;
-	@Qualifier("orderServiceTwo")
-	@Autowired
-	private IOrderService orderServiceTwo;
 
 	@ShardingTransactionType(TransactionType.XA)
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void createOrder(String status) {
-		this.doCreateOrder(0, status);
-		this.orderServiceTwo.createOrder(status);
-		this.doCreateOrder(3, status);
-
-		// 期望事务回滚, 但事务实际被提交
-		throw new IllegalStateException("rollback");
+		this.doCreateOrder(1, status);
+		this.doCreateOrder(2, status);
 	}
 
 	private void doCreateOrder(long userId, String status) {
