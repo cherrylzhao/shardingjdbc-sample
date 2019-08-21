@@ -1,18 +1,20 @@
 package com.bytesvc.shardingjdbc.sample.main;
 
 import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.bytesvc.shardingjdbc.sample.config.ShardingConfiguration;
+
 @SpringBootApplication(scanBasePackages = "com.bytesvc.shardingjdbc.sample")
-@EnableAutoConfiguration(exclude = { SpringBootConfiguration.class, DataSourceAutoConfiguration.class	 })
+@EnableAutoConfiguration(exclude = { SpringBootConfiguration.class, DataSourceAutoConfiguration.class })
 @EnableTransactionManagement
-@MapperScan("com.bytesvc.shardingjdbc.sample.dao")
+@Import(ShardingConfiguration.class)
 public class ShardingJdbcSampleBootstrap {
 
 	public static void main(String[] args) {

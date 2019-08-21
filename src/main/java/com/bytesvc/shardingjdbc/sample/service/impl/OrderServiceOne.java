@@ -2,40 +2,45 @@ package com.bytesvc.shardingjdbc.sample.service.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.List;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bytesvc.shardingjdbc.sample.service.IAccountService;
+import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 
 @Primary
 @Service
-public class AccountServiceOne implements IAccountService {
-	@Autowired
-	private DataSource dataSource;
+public class OrderServiceOne implements IOrderService {
+	@Qualifier("shardingDataSource")
+	@Autowired(required = false)
+	private DataSource shardingDataSource;
 
 	@Transactional
-	public void createAccount(long userId, String status) {
-		this.doCreateAccount(userId, status);
+	public void createOrder(String status) {
+		this.doCreateOrder(0, status);
+		this.doCreateOrder(1, status);
+
+		// 期望事务回滚, 但事务实际被提交
 		throw new IllegalStateException("rollback");
 	}
 
-	private void doCreateAccount(long userId, String status) {
+	private void doCreateOrder(long userId, String status) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
-			conn = this.dataSource.getConnection();
+			conn = this.shardingDataSource.getConnection();
 			stmt = conn.prepareStatement("INSERT INTO t_order (user_id, status) VALUES (?, ?)");
 			stmt.setLong(1, userId);
 			stmt.setString(2, status);
 			stmt.executeUpdate();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (SQLException error) {
+			throw new IllegalStateException(error.getMessage(), error);
 		} finally {
 			this.closeQuietly(stmt);
 			this.closeQuietly(conn);
@@ -50,14 +55,6 @@ public class AccountServiceOne implements IAccountService {
 				// ignore
 			}
 		}
-	}
-
-	public void deleteAccount(long orderId) {
-		// this.accountDao.deleteAccount(orderId);
-	}
-
-	public List<Object> findAllAcount() {
-		return null; // return this.accountDao.findAllAcount();
 	}
 
 }
