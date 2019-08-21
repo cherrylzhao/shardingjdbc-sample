@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 
-@Service("orderServiceTwo")
-public class OrderServiceTwo implements IOrderService {
+@Service("requiresNewOrderService")
+public class RequiresNewOrderServiceImpl implements IOrderService {
 	@Qualifier("shardingDataSource")
 	@Autowired(required = false)
 	private DataSource shardingDataSource;

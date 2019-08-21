@@ -19,19 +19,19 @@ import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 
 @Primary
 @Service
-public class OrderServiceOne implements IOrderService {
+public class DefaultOrderServiceImpl implements IOrderService {
 	@Qualifier("shardingDataSource")
 	@Autowired(required = false)
 	private DataSource shardingDataSource;
-	@Qualifier("orderServiceTwo")
+	@Qualifier("requiresNewOrderService")
 	@Autowired
-	private IOrderService orderServiceTwo;
+	private IOrderService requiresNewOrderService;
 
 	@ShardingTransactionType(TransactionType.XA)
 	@Transactional
 	public void createOrder(String status) {
 		this.doCreateOrder(0, status);
-		this.orderServiceTwo.createOrder(status);
+		this.requiresNewOrderService.createOrder(status);
 		this.doCreateOrder(3, status);
 
 		// 期望事务回滚, 但事务实际被提交
