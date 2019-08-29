@@ -3,14 +3,13 @@ package com.bytesvc.shardingjdbc.sample.service.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +18,7 @@ import com.bytesvc.shardingjdbc.sample.service.IOrderService;
 
 @Service("requiresNewOrderService")
 public class RequiresNewOrderServiceImpl implements IOrderService {
-	@Qualifier("shardingDataSource")
-	@Autowired(required = false)
+	@Autowired
 	private DataSource shardingDataSource;
 
 	@ShardingTransactionType(TransactionType.XA)
@@ -34,8 +32,8 @@ public class RequiresNewOrderServiceImpl implements IOrderService {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
-			conn = DataSourceUtils.getConnection(this.shardingDataSource);
-			// conn = this.shardingDataSource.getConnection();
+			conn = this.shardingDataSource.getConnection();
+			// System.out.printf("con2: %s%n", conn);
 			stmt = conn.prepareStatement("INSERT INTO t_order (user_id, status) VALUES (?, ?)");
 			stmt.setLong(1, userId);
 			stmt.setString(2, status);
@@ -56,6 +54,13 @@ public class RequiresNewOrderServiceImpl implements IOrderService {
 				// ignore
 			}
 		}
+	}
+
+	public void deleteOrder(long userId) {
+	}
+
+	public List<Long> listUserId() {
+		return null;
 	}
 
 }
